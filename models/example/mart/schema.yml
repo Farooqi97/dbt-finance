@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: dim_stock
+    description: "Stock dimension table"
+    columns:
+      - name: stock_id
+        description: "Unique identifier for each stock"
+        tests:
+          - unique
+          - not_null
+      - name: stock_name
+        description: "Stock name"
+
+  - name: fact_balance
+    description: "Balance fact table"
+    columns:
+      - name: stock_id
+        description: "Unique identifier for each stock"
+        tests:
+          - not_null
+      - name: stock_name
+      - name: total_current_assets
+      - name: total_current_liabilities
+      - name: end_date
+        tests:
+          - not_null
+
+  - name: fact_cashflow
+    description: "Cashflow fact table"
+    columns:
+      - name: stock_id
+        description: "Unique identifier for each stock"
+        tests:
+          - not_null
+      - name: stock_name
+      - name: end_date
+        tests:
+          - not_null
+
+  - name: fact_income
+    description: "Income fact table"
+    columns:
+      - name: stock_id
+        description: "Unique identifier for each stock"
+        tests:
+          - not_null
+      - name: stock_name
+      - name: total_revenue
+      - name: gross_profit
+      - name: ebit
+      - name: interest_expense
+      - name: income_tax_expense
+      - name: cost_of_revenue
+      - name: end_date
+        tests:
+          - not_null

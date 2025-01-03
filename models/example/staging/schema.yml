@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_balance
+    description: "Balance staging table"
+    columns:
+      - name: stock
+      - name: total_current_assets
+      - name: total_current_liabilities
+      - name: end_date
+        tests:
+          - not_null
+
+  - name: stg_cashflow
+    description: "Cashflow staging table"
+    columns:
+      - name: stock
+      - name: end_date
+        tests:
+          - not_null
+
+  - name: stg_income
+    description: "Income staging table"
+    columns:
+      - name: stock
+      - name: total_revenue
+      - name: gross_profit
+      - name: ebit
+      - name: interest_expense
+      - name: income_tax_expense
+      - name: cost_of_revenue
+      - name: end_date
+        tests:
+          - not_null
