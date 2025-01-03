@@ -1,0 +1,20 @@
+# .github/workflows/dbt_run.yml
+name: dbt Run
+
+on:  
+  push:  
+    branches: [ main ]  
+
+jobs:  
+  run-dbt:  
+    runs-on: ubuntu-latest  
+
+    steps:  
+      - name: Checkout repo  
+        uses: actions/checkout@v2  
+
+      - name: Install dbt  
+        run: pip install dbt-bigquery dbt-postgres  
+
+      - name: Run dbt models  
+        run: dbt run  
