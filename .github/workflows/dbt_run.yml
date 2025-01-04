@@ -1,59 +1,11 @@
-name: Run dbt Models on Push
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+name: dbt Run
+on: push
 jobs:
-  dbt_run:
+  run-dbt:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13  # Use the PostgreSQL Docker image
-        ports:
-          - 5432:5432  # Expose PostgreSQL port
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: '1234'
-          POSTGRES_DB: excel_db
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install dbt and Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install dbt-postgres
-
-      - name: Set up PostgreSQL Database Credentials
-        env:
-          DB_HOST: localhost  # Use localhost since the database is within the container
-          DB_USER: postgres
-          DB_PASSWORD: '1234'
-          DB_NAME: excel_db
-        run: |
-          echo "Setting up PostgreSQL credentials..."
-          echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
-          echo "DB_USER=${DB_USER}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
-          echo "DB_NAME=${DB_NAME}" >> $GITHUB_ENV
-
-      - name: Run dbt
-        run: |
-          echo "Running dbt models..."
-          dbt run
+      - uses: actions/checkout@v2
+      - name: Install dbt
+        run: pip install dbt-bigquery
+      - name: Run dbt models
+        run: dbt run
