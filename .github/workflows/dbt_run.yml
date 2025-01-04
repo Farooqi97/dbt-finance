@@ -1,20 +1,41 @@
-# .github/workflows/dbt_run.yml
-name: dbt Run
+name: dbt Run (PostgreSQL)
 
-on:  
-  push:  
-    branches: [ main ]  
+on:
+  push:
+    branches: [ main ]
 
-jobs:  
-  run-dbt:  
-    runs-on: ubuntu-latest  
+jobs:
+  run-dbt:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-    steps:  
-      - name: Checkout repo  
-        uses: actions/checkout@v2  
+    - name: Install dbt (Postgres)
+      run: pip install dbt-postgres
 
-      - name: Install dbt  
-        run: pip install dbt-bigquery dbt-postgres  
+    # Dynamically create profiles.yml for PostgreSQL
+    - name: Write dbt profile (PostgreSQL)
+      run: |
+        mkdir -p ~/.dbt
+        echo "
+        finance_project:
+          target: dev
+          outputs:
+            dev:
+              type: postgres
+              host: localhost
+              user: postgres
+              password: '1234'
+              port: 5432
+              dbname: excel_db
+              schema: finance
+              threads: 4
+        " > ~/.dbt/profiles.yml
 
-      - name: Run dbt models  
-        run: dbt run  
+    - name: Test dbt connection
+      run: dbt debug
+    
+    - name: Run dbt models
+      run: dbt run
