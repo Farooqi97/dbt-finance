@@ -1,4 +1,4 @@
-name: dbt Run (PostgreSQL)
+name: dbt Run (PostgreSQL - Localhost)
 
 on:
   push:
@@ -12,10 +12,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install dbt (Postgres)
-      run: pip install dbt-postgres
+    - name: Install dbt and PostgreSQL Client
+      run: |
+        pip install dbt-postgres
+        sudo apt-get install postgresql-client
 
-    # Dynamically create profiles.yml for PostgreSQL
+    - name: Test PostgreSQL Connection
+      run: |
+        PGPASSWORD='1234' psql -h localhost -U postgres -d excel_db -p 5432 -c "\dt"
+
     - name: Write dbt profile (PostgreSQL)
       run: |
         mkdir -p ~/.dbt
@@ -33,6 +38,13 @@ jobs:
               schema: finance
               threads: 4
         " > ~/.dbt/profiles.yml
+
+    - name: Print profiles.yml (for Debugging)
+      run: cat ~/.dbt/profiles.yml
+
+    - name: Create Schema if Missing
+      run: |
+        PGPASSWORD='1234' psql -h localhost -U postgres -d excel_db -p 5432 -c "CREATE SCHEMA IF NOT EXISTS finance"
 
     - name: Test dbt connection
       run: dbt debug
