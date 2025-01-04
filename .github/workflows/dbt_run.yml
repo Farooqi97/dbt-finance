@@ -53,22 +53,6 @@ jobs:
           echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
           echo "DB_NAME=${DB_NAME}" >> $GITHUB_ENV
 
-      - name: Create dbt profiles.yml for PostgreSQL
-        run: |
-          mkdir -p ~/.dbt
-          echo "finance_project:
-            target: dev
-            outputs:
-              dev:
-                type: postgres
-                host: ${DB_HOST}
-                user: ${DB_USER}
-                password: \"${DB_PASSWORD}\"
-                port: 5432
-                dbname: ${DB_NAME}
-                schema: finance
-                threads: 4" > ~/.dbt/profiles.yml
-
       - name: Run dbt
         run: |
           echo "Running dbt models..."
