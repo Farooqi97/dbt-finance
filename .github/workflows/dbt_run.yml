@@ -29,7 +29,7 @@ jobs:
         env:
           DB_HOST: localhost
           DB_USER: postgres
-          DB_PASSWORD: '1234'
+          DB_PASSWORD: '1234'  # Ensure the password is a string (with quotes)
           DB_NAME: excel_db
         run: |
           echo "Setting up PostgreSQL credentials..."
@@ -48,7 +48,7 @@ jobs:
                 type: postgres
                 host: ${DB_HOST}
                 user: ${DB_USER}
-                password: ${DB_PASSWORD}
+                password: \"${DB_PASSWORD}\"  # Ensure password is treated as a string
                 port: 5432
                 dbname: ${DB_NAME}
                 schema: finance
