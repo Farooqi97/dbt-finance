@@ -1,53 +1,61 @@
-name: dbt Run (PostgreSQL - Localhost)
+name: Run dbt Models on Push
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # You can adjust this to trigger for other branches as needed
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch
 
 jobs:
-  run-dbt:
+  dbt_run:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2  # Check out the code from the repository
 
-    - name: Install dbt and PostgreSQL Client
-      run: |
-        pip install dbt-postgres
-        sudo apt-get install postgresql-client
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Use Python version 3.x
 
-    - name: Test PostgreSQL Connection
-      run: |
-        PGPASSWORD='1234' psql -h localhost -U postgres -d excel_db -p 5432 -c "\dt"
+      - name: Install dbt and Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install dbt-postgres  # Install dbt for PostgreSQL
+          pip install -r requirements.txt  # Install any other dependencies if present
 
-    - name: Write dbt profile (PostgreSQL)
-      run: |
-        mkdir -p ~/.dbt
-        echo "
-        finance_project:
-          target: dev
-          outputs:
-            dev:
-              type: postgres
-              host: localhost
-              user: postgres
-              password: '1234'
-              port: 5432
-              dbname: excel_db
-              schema: finance
-              threads: 4
-        " > ~/.dbt/profiles.yml
+      - name: Set up PostgreSQL Database Credentials
+        env:
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASSWORD: '1234'
+          DB_NAME: excel_db
+        run: |
+          echo "Setting up PostgreSQL credentials..."
+          echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
+          echo "DB_USER=${DB_USER}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
+          echo "DB_NAME=${DB_NAME}" >> $GITHUB_ENV
 
-    - name: Print profiles.yml (for Debugging)
-      run: cat ~/.dbt/profiles.yml
+      - name: Create dbt profiles.yml for PostgreSQL
+        run: |
+          mkdir -p ~/.dbt
+          echo "finance_project:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: ${DB_HOST}
+                user: ${DB_USER}
+                password: ${DB_PASSWORD}
+                port: 5432
+                dbname: ${DB_NAME}
+                schema: finance
+                threads: 4" > ~/.dbt/profiles.yml
 
-    - name: Create Schema if Missing
-      run: |
-        PGPASSWORD='1234' psql -h localhost -U postgres -d excel_db -p 5432 -c "CREATE SCHEMA IF NOT EXISTS finance"
-
-    - name: Test dbt connection
-      run: dbt debug
-    
-    - name: Run dbt models
-      run: dbt run
+      - name: Run dbt
+        run: |
+          echo "Running dbt models..."
+          dbt run  # Run the dbt models
