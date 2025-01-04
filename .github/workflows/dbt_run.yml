@@ -63,7 +63,7 @@ jobs:
                 type: postgres
                 host: ${DB_HOST}
                 user: ${DB_USER}
-                password: \"${DB_PASSWORD}\"  # Ensure password is treated as a string
+                password: \"${DB_PASSWORD}\"
                 port: 5432
                 dbname: ${DB_NAME}
                 schema: finance
