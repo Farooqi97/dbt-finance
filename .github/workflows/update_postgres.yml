@@ -23,9 +23,9 @@ jobs:
         ./update_postgres.sh
 
     
-    # - name: Export Updated Schema
-    #   run: |
-    #     pg_dump -h localhost -U postgres -d finance_db --schema-only > schema_update.sql
-    #     git add schema_update.sql
-    #     git commit -m "Auto-update schema from PostgreSQL pipeline"
-    #     git push
+    - name: Export Updated Schema
+      run: |
+        pg_dump -h localhost -U postgres -d finance_db --schema-only > schema_update.sql
+        git add schema_update.sql
+        git commit -m "Auto-update schema from PostgreSQL pipeline"
+        git push
