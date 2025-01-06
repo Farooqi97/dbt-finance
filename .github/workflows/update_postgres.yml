@@ -1,12 +1,10 @@
 name: Update PostgreSQL on Main Push
 
 on:
-  workflow_dispatch:  # Manual trigger for testing
-
-on:
   push:
     branches:
-      - main  # Trigger only on main branch push
+      - main  # Trigger on main branch push
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   update_db:
