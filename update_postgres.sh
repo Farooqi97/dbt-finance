@@ -12,8 +12,8 @@ export PGPASSWORD=$DB_PASSWORD
 
 # SQL Commands
 psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "
-  ALTER TABLE finance.raw_balancesheethistory_annually ADD COLUMN new_column DOUBLE PRECISION;
-  UPDATE finance.raw_balancesheethistory_annually SET new_column = totalCurrentAssets - totalCurrentLiabilities;
+  ALTER TABLE finance.raw_incomestatementhistory_annually ADD COLUMN net_profit DOUBLE PRECISION;
+  UPDATE finance.raw_incomestatementhistory_annually SET net_profit = ebit - interestExpense - incomeTaxExpense;
 "
 
 echo "PostgreSQL update complete."
