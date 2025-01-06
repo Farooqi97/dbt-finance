@@ -1,0 +1,25 @@
+name: Update PostgreSQL on Main Push
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on main branch push
+
+jobs:
+  update_db:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up PostgreSQL Client
+      run: sudo apt-get install -y postgresql-client
+
+    - name: Run Update Script
+      run: |
+        chmod +x update_postgres.sh
+        ./update_postgres.sh
